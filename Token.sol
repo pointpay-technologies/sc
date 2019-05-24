@@ -24,7 +24,7 @@ contract PPToken is ERC20, ERC20Detailed, ERC20Burnable {
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
      */
-    constructor () public ERC20Detailed("PointPay Token", "PAY", 3) {
+    constructor () public ERC20Detailed("PointPay Token", "PXP", 3) {
         _mint(msg.sender, INITIAL_SUPPLY);
     }
     function getNow() public view returns(uint256) {

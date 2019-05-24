@@ -16,7 +16,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/utils/Re
  * the methods to add functionality. Consider using 'super' where appropriate to concatenate
  * behavior.
  */
-contract PPCrowdsale is ReentrancyGuard {
+contract APPCrowdsale is ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -39,6 +39,8 @@ contract PPCrowdsale is ReentrancyGuard {
     address private _owner;
 
     uint256 constant private minRate = 50000000000;
+
+    uint256 private _minTokenSum = 0;
 
     /**
      * Event for token purchase logging
@@ -91,6 +93,15 @@ contract PPCrowdsale is ReentrancyGuard {
         _rate = newRate;
     }
 
+    /**
+     * @param minTokenSum minimal sum in PAY tokens,
+     * that investor can buy
+     **/
+    function changeMinTokenSum(uint256 minTokenSum) public {
+        require (_trusted[msg.sender] == true || msg.sender == _owner);
+        _minTokenSum = minTokenSum;
+    }
+
     // -----------------------------------------
     // Crowdsale external interface
     // -----------------------------------------
@@ -126,6 +137,10 @@ contract PPCrowdsale is ReentrancyGuard {
      */
     function rate() public view returns (uint256) {
         return _rate;
+    }
+
+    function minTokenSum() public view returns (uint256) {
+        return _minTokenSum;
     }
 
     /**
@@ -181,6 +196,7 @@ contract PPCrowdsale is ReentrancyGuard {
         require(beneficiary != address(0));
         require(weiAmount != 0);
         require(weiAmount >= _rate);
+        require(_getTokenAmount(weiAmount) >= _minTokenSum);
 
     }
 
